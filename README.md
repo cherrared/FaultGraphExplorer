@@ -1,4 +1,4 @@
-#Fault Graph Explorer
+# Fault Graph Explorer
 
 ## The heart of the _Sakura_ Flower
 
