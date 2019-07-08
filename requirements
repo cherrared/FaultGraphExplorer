@@ -1,0 +1,8 @@
+z3
+pygraphviz
+networkx
+scipy
+matplotlib
+matplotlib.pyplot
+subprocess
+PyYAML

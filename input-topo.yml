@@ -1,0 +1,123 @@
+Sites:
+  site1:     
+    VNFs:
+        - VNF:
+          - Name: bono1 
+          - nb: 1 
+          - monit: True
+          - nb_VLcon: 1
+          - nb_VDcon: 0       
+          - VLcon: sprout1
+          - Type: Docker
+
+          
+          
+        - VNF: 
+          - Name: sprout1
+          - nb: 2
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 2 
+          - VDcon: homer
+          - VDcon: homestead
+          - Type: Docker
+          
+        - VNF: 
+          - Name: E1
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 0 
+          - Type: Docker 
+          
+          
+        
+    Networks:
+      - Network_bridge: NB1
+      - etcd: E1    #None for nothing
+      - nb_Pcon: 1
+      - Pcon: 3    #site3
+
+      
+  site2:     
+    VNFs:
+        - VNF:
+          - Name: bono2 
+          - nb: 1 
+          - monit: True
+          - nb_VLcon: 1
+          - nb_VDcon: 0       
+          - VLcon: sprout2
+          - Type: Docker
+          
+          
+        - VNF: 
+          - Name: sprout2
+          - nb: 2
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 2 
+          - VDcon: homer
+          - VDcon: homestead
+          - Type: Docker
+        - VNF: 
+          - Name: E2
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 0 
+          - nb_VDcon: 0 #for etcd 0 we verify etcd converge otherwise
+          - Type: Docker
+          
+        
+    Networks:
+      - Network_bridge: NB2
+      - etcd: E2    #None for nothing
+      - nb_Pcon: 1
+      - Pcon: 3    #site3    
+    
+
+  site3:   
+    VNFs:
+        - VNF:
+          - Name: homer
+          - nb: 1 
+          - monit: True
+          - nb_VLcon: 1
+          - nb_VDcon: 0
+          - VLcon: cass
+          - Type: Docker
+          
+          
+        - VNF: 
+          - Name: homestead
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 1
+          - nb_VDcon: 0
+          - VLcon: cass
+          - Type: Docker
+        - VNF: 
+          - Name: cass
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 0
+          - Type: Docker
+        
+          
+        - VNF: 
+          - Name: EM
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 0           
+          - Type: Docker
+    Networks:
+      - Network_bridge: NB3
+      - etcd: EM   #None for nothing
+      - nb_Pcon: 0
+  
+  
+          
+          
+   

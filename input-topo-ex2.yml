@@ -1,0 +1,85 @@
+Sites:
+  site1:     
+    VNFs:
+        - VNF:
+          - Name: bono1 
+          - nb: 1 
+          - monit: True
+          - nb_VLcon: 1
+          - nb_VDcon: 0       
+          - VLcon: sprout1
+          
+          
+        - VNF: 
+          - Name: sprout1
+          - nb: 2
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 2 
+          - VDcon: homer
+          - VDcon: homestead
+          
+        - VNF: 
+          - Name: E1
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 0  
+          
+          
+        
+    Networks:
+      - Network_bridge: NB1
+      - etcd: E1    #None for nothing
+      - nb_Pcon: 1
+      - Pcon: 2    #eg: 2 for site2
+
+      
+ 
+
+  site2:   
+    VNFs:
+        - VNF:
+          - Name: homer
+          - nb: 1 
+          - monit: True
+          - nb_VLcon: 1
+          - nb_VDcon: 0
+          - VLcon: cass
+
+        
+          
+          
+        - VNF: 
+          - Name: homestead
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 1
+          - nb_VDcon: 0
+          - VLcon: cass
+
+        - VNF: 
+          - Name: cass
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 0
+          
+        
+          
+        - VNF: 
+          - Name: EM
+          - nb: 1
+          - monit: True
+          - nb_VLcon: 0
+          - nb_VDcon: 0           
+        
+    Networks:
+      - Network_bridge: NB2
+      - etcd: EM   #None for nothing
+      - nb_Pcon: 0
+  
+  
+          
+          
+   
