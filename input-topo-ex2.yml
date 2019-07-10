@@ -8,6 +8,7 @@ Sites:
           - nb_VLcon: 1
           - nb_VDcon: 0       
           - VLcon: sprout1
+          - Type: Docker
           
           
         - VNF: 
@@ -18,6 +19,7 @@ Sites:
           - nb_VDcon: 2 
           - VDcon: homer
           - VDcon: homestead
+          - Type: Docker
           
         - VNF: 
           - Name: E1
@@ -25,8 +27,11 @@ Sites:
           - monit: True
           - nb_VLcon: 0
           - nb_VDcon: 0  
-          
-          
+          - Type: Docker_ETCD
+
+
+
+                    
         
     Networks:
       - Network_bridge: NB1
@@ -46,6 +51,7 @@ Sites:
           - nb_VLcon: 1
           - nb_VDcon: 0
           - VLcon: cass
+          - Type: Docker
 
         
           
@@ -57,6 +63,7 @@ Sites:
           - nb_VLcon: 1
           - nb_VDcon: 0
           - VLcon: cass
+          - Type: Docker
 
         - VNF: 
           - Name: cass
@@ -64,7 +71,7 @@ Sites:
           - monit: True
           - nb_VLcon: 0
           - nb_VDcon: 0
-          
+          - Type: Docker
         
           
         - VNF: 
@@ -73,7 +80,7 @@ Sites:
           - monit: True
           - nb_VLcon: 0
           - nb_VDcon: 0           
-        
+          - Type: Docker_ETCD
     Networks:
       - Network_bridge: NB2
       - etcd: EM   #None for nothing

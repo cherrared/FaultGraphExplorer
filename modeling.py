@@ -31,9 +31,12 @@ def global_graph(PATH):
     Edico = {}
     Sdico = {}
     Ssdico = {}
+    # Dfine the dico of VNF types
+    Tdico = {}
     i = 1
     scpt = 1
     list = []
+    Bono_list = []
     data = data["Sites"]
     site_num = 0
     while i <= len(data):
@@ -44,10 +47,17 @@ def global_graph(PATH):
         while j < len(l):
             xx = l[j]
             name = xx["VNF"][0]["Name"]
+            if "bono" in name:
+                Bono_list.append(name)
+            num_DC = xx["VNF"][4]["nb_VDcon"]
+            num_LC = xx["VNF"][3]["nb_VLcon"]
+            num_type = num_DC + num_LC + 5
+            type_docker = xx["VNF"][num_type]["Type"]
+            Tdico[str(name)] = type_docker
             elasticity = xx["VNF"][1]["nb"]
             Edico[(i, str(name))] = elasticity
             Sdico[str(name)] = i
-            #numero de VNF dans le site
+
             Ssdico[str(name)] = j
 
             j = j + 1
@@ -127,6 +137,9 @@ def global_graph(PATH):
             num_VLcon = t["VNF"][3]["nb_VLcon"]
             num_VDcon = t["VNF"][4]["nb_VDcon"]
 
+            num_num_lignes = num_VDcon + num_VLcon + 5
+            type_docker = t["VNF"][num_num_lignes]["Type"]
+
             monit = t["VNF"][2]["monit"]
             xx = data["site%i" % i]["Networks"][0]
             Nbi = xx["Network_bridge"]
@@ -148,14 +161,14 @@ def global_graph(PATH):
             ## Define the application nodes
 
             xcpt = BK.A_VNFs(G, site_num, VNF, elasticity, number_elasticity,
-                             monit, etcd_bool, etcd, xcpt)
+                             monit, etcd_bool, etcd, xcpt, type_docker)
 
             # Local Application Connectivity :in same site
+
             m = 1
+
             while m <= num_VLcon:
                 l = m + 4
-                #print("***************")
-                #print(l)
 
                 VNF2 = t["VNF"][l]["VLcon"]
                 site2 = Sdico[str(VNF2)]
@@ -168,6 +181,7 @@ def global_graph(PATH):
                 xcpt = BK.LA_con(G, VNF, elasticity, number_elasticity, VNF2,
                                  elasticity2_bool, num2, etcd_bool,
                                  elasticity3_bool, num3, etcd, xcpt)
+
                 m = m + 1
             # Distant Application Connectivity: in different sites
             q = 1
@@ -175,6 +189,7 @@ def global_graph(PATH):
                 l = 4 + num_VLcon + q
 
                 VNF2 = t["VNF"][l]["VDcon"]
+
                 #print(VNF2)
                 site2 = Sdico[str(VNF2)]
                 #print(site2)
@@ -205,11 +220,20 @@ def global_graph(PATH):
                 q = q + 1
             j = j + 1
         i = i + 1
-
-    #print(G.nodes())
-    #print(G.edges())
+    # Define the register services:
+    cpt_register = 1
+    Register_Services = []
+    for e in Bono_list:
+        Register_Services.append(str(e))
+        cpt_register = Service_Register_modeling(G, PATH, Register_Services,
+                                                 cpt_register)
+        cpt_register = cpt_register + 1
+        del Register_Services[:]
 
     return G
+
+
+# function to create
 
 
 def topology_graph_call(path):
@@ -262,6 +286,7 @@ def topology_graph_call(path):
     return (Topo)
 
 
+# function to delete "homer" and "ETCD" from the register nodes
 def topology_graph_Register(path):
 
     Topo_R = topology_graph_call(path)
@@ -269,9 +294,12 @@ def topology_graph_Register(path):
     for e in Topo_R.nodes():
         dic.append(e)
     j = 0
+
     while j < len(dic):
 
         if "homer" in str(dic[j]):
+            Topo_R.remove_node(dic[j])
+        if "E" in str(dic[j]):
             Topo_R.remove_node(dic[j])
         j = j + 1
     return (Topo_R)

@@ -102,58 +102,6 @@ def graph_GG(G, nodes):
     return (GG)
 
 
-######## Function of shared variables with services #####################
-
-
-def shared_var(G, service, service2):
-
-    neighbors = []
-
-    #print(neighbors[0])
-    for j in list(G.neighbors(service)):
-        neighbors.append(j)
-    for j in list(G.predecessors(service)):
-        neighbors.append(j)
-
-    neighbors1 = []
-    for j in list(G.neighbors(service2)):
-        neighbors1.append(j)
-    for j in list(G.predecessors(service2)):
-        neighbors1.append(j)
-    shar = []
-    n = 0  ### for the case where there is no shared var
-    for f in neighbors:
-
-        j = 0
-        k = 0
-        while (k < len(neighbors1)) and (f != neighbors1[j]):
-            j = j + 1
-            k = k + 1
-
-        if k < len(neighbors1):
-            n = n + 1  #number of shared var
-            shar.append(f)
-
-    return (shar, n)
-
-
-### non_shared_var between two services : a service is a list of nodes
-
-
-def non_shared_var(G, service1, service2):
-    l, n = shared_var(G, service1, service2)
-    neighbors = []
-    for j in list(G.neighbors(service1)):
-        neighbors.append(j)
-    for j in list(G.predecessors(service2)):
-        neighbors.append(j)
-
-    for i in l:
-
-        neighbors.remove(i)
-    return (neighbors)
-
-
 def yaml_loader(filepath):
     with open(filepath, "r") as topo:
         data = yaml.load(topo)
@@ -164,7 +112,7 @@ def yaml_dump(filepath, data):
     yaml.dump(data, topo)
 
 
-def boucle_diag(G, ObsT, ObsF):
+def boucle_diag(G, ObsT, ObsF, ObsN):
 
     Obs_total = []
 
@@ -181,12 +129,16 @@ def boucle_diag(G, ObsT, ObsF):
         Obs_total.append(i)
     for i in ObsT:
         Obs_total.append(i)
+    for i in ObsN:
+        Obs_total.append(i)
     GF = graph_GG(G, Obs_total)
 
     ### color and draw the sub_graph
     for i in ObsF:
         Obs_total.append(i)
     for i in ObsT:
+        Obs_total.append(i)
+    for i in ObsN:
         Obs_total.append(i)
     color_map, color_map2 = color_graph(GF, ObsF)
 
@@ -217,7 +169,7 @@ def boucle_diag(G, ObsT, ObsF):
     fi.write("    b=b+1" + "\n")
     fi.write(" return b " + "\n")
 
-    fi.write("def SMTAlgo(ObsT, ObsF): \n")
+    fi.write("def SMTAlgo(ObsT, ObsF, ObsN): \n")
     ### Write the definition of variables in the SMT file:
     z = 0
     for d in GF.nodes():
@@ -369,7 +321,7 @@ def boucle_diag(G, ObsT, ObsF):
     # if node e is not testable , extend the graph and add it to the extended observation file:
     fi.write("     elif valT[e] == 0:  \n")
     fi.write("       ObsN.append(str(e)) \n")
-    fi.write(" return(ObsT, ObsF)")
+    fi.write(" return(ObsT, ObsF, ObsN)")
 
     fi.close()
     #os.system('pwd')
@@ -386,13 +338,11 @@ if __name__ == "__main__":
     ## count the services
     cpt_service = 1
 
-    ## ObsF contains the observation variables
+    ## ObsF contains the False observation variables
 
     ObsF = []
     ObsT = []
-
-    #ObsT1=[]
-    #ObsF1=[]
+    ObsN = []
 
     G = nx.DiGraph()
 
@@ -418,43 +368,7 @@ if __name__ == "__main__":
 
             service_obs = l[v]
 
-            if ("Register" in service_obs) == False:
-
-                ObsF.append(service_obs)
-            v = v + 1
-
-        ### Define the graph for Register with red value:
-
-        cpt_service = 1  # number of register services identified
-        v = 0
-        while v < len(l):
-
-            service_obs = l[v]
-            if ("Register" in service_obs) == True:
-                RS = l[v]  # Get the register services list
-
-                t = 0  # Get each element of the Register list
-                Register_Services = []
-                while t < len(RS["Register"]):
-                    Register_Services.append(str(RS["Register"][t]))
-                    t = t + 1
-
-                ## Construct the service graph element
-                ## cpt_register gets the number of registers in the dependency graph sharing the same variables
-
-                cpt_register = md.Service_Register_modeling(
-                    G, topo_path, Register_Services, cpt_service)
-
-                ## get the value of the number of affected register services
-                i = 1
-
-                while i <= cpt_register:
-
-                    ObsF.append("Register{0}{1}".format(cpt_service, i))
-                    i = i + 1
-
-                cpt_service = cpt_service + 1
-
+            ObsF.append(service_obs)
             v = v + 1
 
     ## Get the "True" values:
@@ -467,42 +381,7 @@ if __name__ == "__main__":
 
             service_obs = ll[v]
 
-            if ("Register" in service_obs) == False:
-
-                ObsT.append(service_obs)
-            v = v + 1
-
-        ### Define the graph for Register with a "True" value:
-
-        v = 0
-        while v < len(ll):
-
-            service_obs = ll[v]
-            if ("Register" in service_obs) == True:
-                RS = ll[v]  # Get the register services list
-
-                t = 0  # Get each element of the Register list
-                Register_Services = []
-                while t < len(RS["Register"]):
-                    Register_Services.append(str(RS["Register"][t]))
-                    t = t + 1
-
-                ## Construct the service graph element
-                ## cpt_register gets the number of registers in the dependency graph sharing the same variables
-
-                cpt_register = md.Service_Register_modeling(
-                    G, topo_path, Register_Services, cpt_service)
-
-                ## get the value of the number of affected register services
-                i = 1
-
-                while i <= cpt_register:
-
-                    ObsT.append("Register{0}{1}".format(cpt_service, i))
-                    i = i + 1
-
-                cpt_service = cpt_service + 1
-
+            ObsT.append(service_obs)
             v = v + 1
 
     # Affect false values for False observations:
@@ -517,9 +396,9 @@ if __name__ == "__main__":
     while True:
 
         #Create the SMT file with the current observations
-        boucle_diag(G, ObsT, ObsF)
+        boucle_diag(G, ObsT, ObsF, ObsN)
 
         # reload the SMT file
         reload(sm)
         # execute the SMT file
-        ObsT, ObSF = sm.SMTAlgo(ObsT, ObsF)
+        ObsT, ObSF, ObsN = sm.SMTAlgo(ObsT, ObsF, ObsN)

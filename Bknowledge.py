@@ -190,82 +190,132 @@ def OVERLAY(G, site1, site2, etcd1_bool, num1, etcd1, etcd2_bool, num2, etcd2,
 
 #********************** application layer n=2
 def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
-           xcpt):  # entry etcd== To wich etcd it is linked
+           xcpt, typeN):  # entry etcd== To wich etcd it is linked
+    if typeN != "Docker_ETCD":
+        if elasticity == False:
+            ## define the app and process nodes
+            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=0)
+            G.add_node("P{0}".format(str(VNF)), SF=2, n=2, T=1)
+            ## define the edges between the app and processes
 
-    if elasticity == False:
-        ## define the app and process nodes
-        G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=0)
-        G.add_node("P{0}".format(str(VNF)), SF=2, n=2, T=1)
-        ## define the edges between the app and processes
-
-        G.add_edges_from(
-            [("P{0}".format(str(VNF)), "App{0}".format(str(VNF)))], at=1)
-        #edge inter layer
-        G.add_edges_from(
-            [("DC{0}S".format(str(VNF)), "App{0}".format(str(VNF)))], at=2)
-
-        if etcd_bool == True:
-            # Define the node ETCD client
-            G.add_node(
-                "P{0}EC".format(str(VNF)), SF=2, n=2, T=1
-            )  # ETCD Client (EC) # SF=2 spontaneous fault with auto recovery
-            # Define the edge between ETCD client and App
             G.add_edges_from(
-                [("P{0}EC".format(str(VNF)), "App{0}".format(str(VNF)))], at=1)
-        if monit == True:
-            G.add_node("P{0}M".format(str(VNF)), SF=1, n=2, T=1)  # M for monit
-            # define the edges between monit and process
+                [("P{0}".format(str(VNF)), "App{0}".format(str(VNF)))], at=1)
+            #edge inter layer
             G.add_edges_from(
-                [("P{0}M".format(str(VNF)), "P{0}".format(str(VNF)))],
-                at=3)  # for monit at=3 == (monit) implique (processes)
+                [("DC{0}S".format(str(VNF)), "App{0}".format(str(VNF)))], at=2)
+
             if etcd_bool == True:
+                # Define the node ETCD client
+                G.add_node(
+                    "P{0}EC".format(str(VNF)), SF=2, n=2, T=1
+                )  # ETCD Client (EC) # SF=2 spontaneous fault with auto recovery
+                # Define the edge between ETCD client and App
                 G.add_edges_from(
-                    [("P{0}M".format(str(VNF)), "P{0}EC".format(str(VNF)))],
-                    at=3)
+                    [("P{0}EC".format(str(VNF)), "App{0}".format(str(VNF)))],
+                    at=1)
+            if monit == True:
+                G.add_node("P{0}M".format(str(VNF)), SF=1, n=2,
+                           T=1)  # M for monit
+                # define the edges between monit and process
+                G.add_edges_from(
+                    [("P{0}M".format(str(VNF)), "P{0}".format(str(VNF)))],
+                    at=3)  # for monit at=3 == (monit) implique (processes)
+                if etcd_bool == True:
+                    G.add_edges_from([("P{0}M".format(
+                        str(VNF)), "P{0}EC".format(str(VNF)))],
+                                     at=3)
 
-    if elasticity == True:
-        G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=0)
-        ## inter layer status dependencies with x
-        G.add_node("clusterS{0}".format(VNF), SF=0, n=2, T=0)
-        G.add_edges_from([("clusterS{0}".format(VNF), "App{0}".format(VNF))],
-                         at=2)  # not(x) --> not(app)
-
-        i = 1
-        while i <= number_elasticity:
+        if elasticity == True:
+            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=0)
+            ## inter layer status dependencies with x
+            G.add_node("clusterS{0}".format(VNF), SF=0, n=2, T=0)
             G.add_edges_from(
-                [("DC{0}{1}S".format(str(VNF), i), "clusterS{0}".format(VNF))],
-                at=0)  # not(x) --> not(app) with x = DC1 orDC2
+                [("clusterS{0}".format(VNF), "App{0}".format(VNF))],
+                at=2)  # not(x) --> not(app)
 
-            G.add_node("App{0}{1}".format(str(VNF), i), SF=0, n=2, T=0)
-            G.add_node("P{0}{1}".format(str(VNF), i), SF=2, n=2, T=1)
+            i = 1
+            while i <= number_elasticity:
+                G.add_edges_from(
+                    [("DC{0}{1}S".format(str(VNF),
+                                         i), "clusterS{0}".format(VNF))],
+                    at=0)  # not(x) --> not(app) with x = DC1 orDC2
 
-            # Define the edges between the APP and processes / App cluster and Appij
-            G.add_edges_from(
-                [("App{0}{1}".format(str(VNF), i), "App{0}".format(str(VNF)))],
-                at=2)  # at=2 --> or
-            G.add_edges_from([("P{0}{1}".format(
-                str(VNF), i), "App{0}{1}".format(str(VNF), i))],
-                             at=1)
-            if etcd_bool == True:
-                G.add_node("P{0}{1}EC".format(str(VNF), i), SF=2, n=2,
-                           T=1)  # ETCD Client (EC)
-                # Define the edge between Process client and App
-                G.add_edges_from([("P{0}{1}EC".format(
+                G.add_node("App{0}{1}".format(str(VNF), i), SF=0, n=2, T=0)
+                G.add_node("P{0}{1}".format(str(VNF), i), SF=2, n=2, T=1)
+
+                # Define the edges between the APP and processes / App cluster and Appij
+                G.add_edges_from([("App{0}{1}".format(
+                    str(VNF), i), "App{0}".format(str(VNF)))],
+                                 at=2)  # at=2 --> or
+                G.add_edges_from([("P{0}{1}".format(
                     str(VNF), i), "App{0}{1}".format(str(VNF), i))],
                                  at=1)
-            if monit == True:
-                G.add_node("P{0}{1}M".format(str(VNF), i), SF=1, n=2,
-                           T=1)  # M for monit
-
-                G.add_edges_from([("P{0}{1}M".format(
-                    str(VNF), i), "P{0}{1}".format(str(VNF), i))],
-                                 at=3)  ## at=3 for monit
                 if etcd_bool == True:
+                    G.add_node("P{0}{1}EC".format(str(VNF), i), SF=2, n=2,
+                               T=1)  # ETCD Client (EC)
+                    # Define the edge between Process client and App
+                    G.add_edges_from([("P{0}{1}EC".format(
+                        str(VNF), i), "App{0}{1}".format(str(VNF), i))],
+                                     at=1)
+                if monit == True:
+                    G.add_node("P{0}{1}M".format(str(VNF), i), SF=1, n=2,
+                               T=1)  # M for monit
+
                     G.add_edges_from([("P{0}{1}M".format(
-                        str(VNF), i), "P{0}{1}EC".format(str(VNF), i))],
-                                     at=3)
-            i = i + 1
-        xcpt = xcpt + 1
+                        str(VNF), i), "P{0}{1}".format(str(VNF), i))],
+                                     at=3)  ## at=3 for monit
+                    if etcd_bool == True:
+                        G.add_edges_from([("P{0}{1}M".format(
+                            str(VNF), i), "P{0}{1}EC".format(str(VNF), i))],
+                                         at=3)
+                i = i + 1
+            xcpt = xcpt + 1
+    else:
+
+        if elasticity == False:
+            G.add_node("App{0}".format(str(VNF)), SF=1, n=2, T=0)
+            # Define the node for the memory cash exception
+            G.add_node("Memory{0}".format(str(VNF)), SF=1, n=2, T=0)
+            G.add_node("ClusterEvent{0}".format(str(VNF)), SF=1, n=2, T=0)
+
+            G.add_edges_from([("App{0}".format(
+                str(VNF)), "ClusterEvent{0}".format(str(VNF)))],
+                             at=0)
+            G.add_edges_from([("Memory{0}".format(
+                str(VNF)), "ClusterEvent{0}".format(str(VNF)))],
+                             at=0)
+            #edge inter layer
+            G.add_edges_from(
+                [("DC{0}S".format(str(VNF)), "App{0}".format(str(VNF)))], at=2)
+        if elasticity == True:
+            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=0)
+            ## inter layer status dependencies with x
+            G.add_node("clusterS{0}".format(VNF), SF=0, n=2, T=0)
+            G.add_edges_from(
+                [("clusterS{0}".format(VNF), "App{0}".format(VNF))],
+                at=2)  # not(x) --> not(app)
+            # Define the node for the memory cash exception
+            G.add_node("Memory{0}".format(str(VNF)), SF=1, n=2, T=0)
+            G.add_node("ClusterEvent{0}".format(str(VNF)), SF=1, n=2, T=0)
+
+            G.add_edges_from([("App{0}".format(
+                str(VNF)), "ClusterEvent{0}".format(str(VNF)))],
+                             at=0)
+            G.add_edges_from([("Memory{0}".format(
+                str(VNF)), "ClusterEvent{0}".format(str(VNF)))],
+                             at=0)
+            i = 1
+            while i <= number_elasticity:
+                G.add_edges_from(
+                    [("DC{0}{1}S".format(str(VNF),
+                                         i), "clusterS{0}".format(VNF))],
+                    at=0)  # not(x) --> not(app) with x = DC1 orDC2
+
+                G.add_node("App{0}{1}".format(str(VNF), i), SF=0, n=2, T=0)
+                G.add_edges_from([("App{0}{1}".format(
+                    str(VNF), i), "App{0}".format(str(VNF)))],
+                                 at=2)  # at=2 --> or
+
     return xcpt
 
 
@@ -282,9 +332,10 @@ def LA_con(G, VNF1, elasticity1_bool, num1, VNF2, elasticity2_bool, num2,
         [("App{0}".format(str(VNF2)), "C{0}{1}".format(str(VNF1), str(VNF2)))],
         at=1)
     if etcd_bool == True:
-        G.add_edges_from([("App{0}".format(str(etcd)), "C{0}{1}".format(
-            str(VNF1), str(VNF2)))],
+        G.add_edges_from([("ClusterEvent{0}".format(
+            str(etcd)), "C{0}{1}".format(str(VNF1), str(VNF2)))],
                          at=1)
+
         if elasticity3_bool == False:
             G.add_edges_from([("DC{0}C".format(str(etcd)), "C{0}{1}".format(
                 str(VNF1), str(VNF2)))],
@@ -350,10 +401,12 @@ def DA_con(G, site1, site2, VNF1, elasticity1_bool, num1, VNF2,
                      at=1)
     if etcd_bool == True:
         G.add_edges_from(
-            [("App{0}".format(etcd), "C{0}{1}".format(VNF1, VNF2))], at=1)
+            [("ClusterEvent{0}".format(etcd), "C{0}{1}".format(VNF1, VNF2))],
+            at=1)
     if etcdM_bool == True:
         G.add_edges_from(
-            [("App{0}".format(etcdM), "C{0}{1}".format(VNF1, VNF2))], at=1)
+            [("ClusterEvent{0}".format(etcdM), "C{0}{1}".format(VNF1, VNF2))],
+            at=1)
 
     if elasticity1_bool == False:
         G.add_edges_from(

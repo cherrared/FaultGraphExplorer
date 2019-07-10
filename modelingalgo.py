@@ -45,12 +45,13 @@ def color_graph(G, lignes):
     #print(G.nodes["s"]['AG'])
     for node in G.nodes():
         k = 0
-        print(node)
+
         while (k < len(lignes) and node != lignes[k]):
             k = k + 1
 
         if (k < len(lignes)):
             color_map.append('red')
+
         elif (G.nodes[node]['n'] == 0):
             color_map.append('blue')
 
@@ -189,7 +190,7 @@ def dependency_graph(topofile):
 
     G = nx.DiGraph()
 
-    ### define the global graph without services
+    ### define the global graph
     G = md.global_graph(topo_path)
 
     return G
