@@ -194,7 +194,7 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
     if typeN != "Docker_ETCD":
         if elasticity == False:
             ## define the app and process nodes
-            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=0)
+            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=1)
             G.add_node("P{0}".format(str(VNF)), SF=2, n=2, T=1)
             ## define the edges between the app and processes
 
@@ -226,7 +226,7 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
                                      at=3)
 
         if elasticity == True:
-            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=0)
+            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=1)
             ## inter layer status dependencies with x
             G.add_node("clusterS{0}".format(VNF), SF=0, n=2, T=0)
             G.add_edges_from(
@@ -240,7 +240,7 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
                                          i), "clusterS{0}".format(VNF))],
                     at=0)  # not(x) --> not(app) with x = DC1 orDC2
 
-                G.add_node("App{0}{1}".format(str(VNF), i), SF=0, n=2, T=0)
+                G.add_node("App{0}{1}".format(str(VNF), i), SF=0, n=2, T=1)
                 G.add_node("P{0}{1}".format(str(VNF), i), SF=2, n=2, T=1)
 
                 # Define the edges between the APP and processes / App cluster and Appij
@@ -273,10 +273,10 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
     else:
 
         if elasticity == False:
-            G.add_node("App{0}".format(str(VNF)), SF=1, n=2, T=0)
+            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=1)
             # Define the node for the memory cash exception
             G.add_node("Memory{0}".format(str(VNF)), SF=1, n=2, T=0)
-            G.add_node("ClusterEvent{0}".format(str(VNF)), SF=1, n=2, T=0)
+            G.add_node("ClusterEvent{0}".format(str(VNF)), SF=0, n=2, T=0)
 
             G.add_edges_from([("App{0}".format(
                 str(VNF)), "ClusterEvent{0}".format(str(VNF)))],
@@ -288,7 +288,7 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
             G.add_edges_from(
                 [("DC{0}S".format(str(VNF)), "App{0}".format(str(VNF)))], at=2)
         if elasticity == True:
-            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=0)
+            G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=1)
             ## inter layer status dependencies with x
             G.add_node("clusterS{0}".format(VNF), SF=0, n=2, T=0)
             G.add_edges_from(
@@ -311,7 +311,7 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
                                          i), "clusterS{0}".format(VNF))],
                     at=0)  # not(x) --> not(app) with x = DC1 orDC2
 
-                G.add_node("App{0}{1}".format(str(VNF), i), SF=0, n=2, T=0)
+                G.add_node("App{0}{1}".format(str(VNF), i), SF=0, n=2, T=1)
                 G.add_edges_from([("App{0}{1}".format(
                     str(VNF), i), "App{0}".format(str(VNF)))],
                                  at=2)  # at=2 --> or

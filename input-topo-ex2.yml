@@ -5,9 +5,10 @@ Sites:
           - Name: bono1 
           - nb: 1 
           - monit: True
-          - nb_VLcon: 1
+          - nb_VLcon: 2
           - nb_VDcon: 0       
           - VLcon: sprout1
+          - VLcon: E1
           - Type: Docker
           
           
@@ -15,8 +16,9 @@ Sites:
           - Name: sprout1
           - nb: 2
           - monit: True
-          - nb_VLcon: 0
-          - nb_VDcon: 2 
+          - nb_VLcon: 1
+          - nb_VDcon: 2
+          - VLcon: E1 
           - VDcon: homer
           - VDcon: homestead
           - Type: Docker
@@ -26,7 +28,8 @@ Sites:
           - nb: 1
           - monit: True
           - nb_VLcon: 0
-          - nb_VDcon: 0  
+          - nb_VDcon: 1
+          - VDcon: EM  
           - Type: Docker_ETCD
 
 
@@ -48,8 +51,9 @@ Sites:
           - Name: homer
           - nb: 1 
           - monit: True
-          - nb_VLcon: 1
+          - nb_VLcon: 2
           - nb_VDcon: 0
+          - VLcon: EM
           - VLcon: cass
           - Type: Docker
 
@@ -60,8 +64,9 @@ Sites:
           - Name: homestead
           - nb: 1
           - monit: True
-          - nb_VLcon: 1
+          - nb_VLcon: 2
           - nb_VDcon: 0
+          - VLcon: EM
           - VLcon: cass
           - Type: Docker
 
@@ -69,8 +74,9 @@ Sites:
           - Name: cass
           - nb: 1
           - monit: True
-          - nb_VLcon: 0
+          - nb_VLcon: 1
           - nb_VDcon: 0
+          - VLcon: EM
           - Type: Docker
         
           

@@ -1,15 +1,18 @@
 Services:
     False_values:
-        - Cbono1sprout1   
-        - Register11    
+        - Csprout1E1
+        - Cbono1E1
+        - CE1EM
+       
+
+        
+        
+       
        
          
       
     True_values: 
-      #  - Register: 
-      #      - bono2 
-      #      - sprout2
-       
+      - Register11
     
        
      

@@ -11,47 +11,84 @@ def comp (s,m):
     b=b+1
  return b 
 def SMTAlgo(ObsT, ObsF, ObsN): 
- Appbono1,Apphomestead,Appsprout1,Chomesteadcass,Appcass,ClusterEventE1,Register11,clusterCsprout1,DCbono1C,Cbono1sprout1,Csprout1homestead,DCE1C =Bools('Appbono1 Apphomestead Appsprout1 Chomesteadcass Appcass ClusterEventE1 Register11 clusterCsprout1 DCbono1C Cbono1sprout1 Csprout1homestead DCE1C')
+ CcassEM,Appbono1,DCEMS,Csprout1E1,AppE1,ClusterEventEM,Register11,clusterCsprout1,DCbono1C,DCEMC,Apphomestead,CE1EM,Appsprout1,Appcass,OV12,Csprout1homestead,DCE1S,ChomesteadEM,DCE1C,Chomesteadcass,ChomerEM,ClusterEventE1,AppEM,Cbono1sprout1,Cbono1E1 =Bools('CcassEM Appbono1 DCEMS Csprout1E1 AppE1 ClusterEventEM Register11 clusterCsprout1 DCbono1C DCEMC Apphomestead CE1EM Appsprout1 Appcass OV12 Csprout1homestead DCE1S ChomesteadEM DCE1C Chomesteadcass ChomerEM ClusterEventE1 AppEM Cbono1sprout1 Cbono1E1')
  s=Solver()
- s.add(Chomesteadcass==And(Apphomestead,Appcass))
+ s.add(CcassEM==And(DCEMC,AppEM,Appcass,ClusterEventEM))
+ s.add(Csprout1E1==And(Appsprout1,clusterCsprout1,ClusterEventE1,AppE1,DCE1C))
  s.add(Register11==And(Appbono1,Apphomestead,Appsprout1,Chomesteadcass,Appcass,Csprout1homestead,Cbono1sprout1))
+ s.add(CE1EM==And(AppEM,ClusterEventE1,ClusterEventEM,AppE1,OV12,DCEMC,DCE1C))
+ s.add(Csprout1homestead==And(Apphomestead,Appsprout1,ClusterEventE1,ClusterEventEM,clusterCsprout1,OV12))
+ s.add(ChomesteadEM==And(DCEMC,AppEM,Apphomestead,ClusterEventEM))
+ s.add(Chomesteadcass==And(Apphomestead,Appcass,ClusterEventEM,DCEMC))
+ s.add(ChomerEM==And(DCEMC,AppEM,ClusterEventEM))
  s.add(Cbono1sprout1==And(Appbono1,Appsprout1,ClusterEventE1,clusterCsprout1,DCbono1C,DCE1C))
- s.add(Csprout1homestead==And(Apphomestead,Appsprout1,ClusterEventE1,clusterCsprout1))
- s.add(Cbono1sprout1== False)
- s.add(Register11== False)
+ s.add(Cbono1E1==And(Appbono1,DCbono1C,ClusterEventE1,AppE1,DCE1C))
+ s.add(Csprout1E1== False)
+ s.add(Cbono1E1== False)
+ s.add(CE1EM== False)
+ s.add(AppE1== False)
+ s.add(Register11== True)
+ s.add(AppEM== True)
  liste=[]
  valT={}
  valSF={}
+ liste.append(CcassEM)
+ valT[CcassEM]=1
+ valSF[CcassEM]=0
  liste.append(Appbono1)
- valT[Appbono1]=0
+ valT[Appbono1]=1
  valSF[Appbono1]=0
- liste.append(Apphomestead)
- valT[Apphomestead]=0
- valSF[Apphomestead]=0
- liste.append(Appsprout1)
- valT[Appsprout1]=0
- valSF[Appsprout1]=0
- liste.append(Chomesteadcass)
- valT[Chomesteadcass]=1
- valSF[Chomesteadcass]=0
- liste.append(Appcass)
- valT[Appcass]=0
- valSF[Appcass]=0
- liste.append(ClusterEventE1)
- valT[ClusterEventE1]=0
- valSF[ClusterEventE1]=1
+ liste.append(DCEMS)
+ valT[DCEMS]=1
+ valSF[DCEMS]=1
+ liste.append(ClusterEventEM)
+ valT[ClusterEventEM]=0
+ valSF[ClusterEventEM]=0
  liste.append(clusterCsprout1)
  valT[clusterCsprout1]=0
  valSF[clusterCsprout1]=0
  liste.append(DCbono1C)
  valT[DCbono1C]=1
  valSF[DCbono1C]=1
- liste.append(Csprout1homestead)
- valT[Csprout1homestead]=1
- valSF[Csprout1homestead]=0
+ liste.append(ChomesteadEM)
+ valT[ChomesteadEM]=1
+ valSF[ChomesteadEM]=0
+ liste.append(Apphomestead)
+ valT[Apphomestead]=1
+ valSF[Apphomestead]=0
+ liste.append(Appsprout1)
+ valT[Appsprout1]=1
+ valSF[Appsprout1]=0
+ liste.append(Appcass)
+ valT[Appcass]=1
+ valSF[Appcass]=0
+ liste.append(OV12)
+ valT[OV12]=0
+ valSF[OV12]=0
+ liste.append(DCEMC)
+ valT[DCEMC]=1
+ valSF[DCEMC]=1
+ liste.append(DCE1S)
+ valT[DCE1S]=1
+ valSF[DCE1S]=1
+ liste.append(Cbono1sprout1)
+ valT[Cbono1sprout1]=1
+ valSF[Cbono1sprout1]=0
  liste.append(DCE1C)
  valT[DCE1C]=1
  valSF[DCE1C]=1
+ liste.append(Chomesteadcass)
+ valT[Chomesteadcass]=1
+ valSF[Chomesteadcass]=0
+ liste.append(ChomerEM)
+ valT[ChomerEM]=1
+ valSF[ChomerEM]=0
+ liste.append(ClusterEventE1)
+ valT[ClusterEventE1]=0
+ valSF[ClusterEventE1]=0
+ liste.append(Csprout1homestead)
+ valT[Csprout1homestead]=1
+ valSF[Csprout1homestead]=0
  fi = open("Solutions.txt", "w")
  Sauve={}
  Sauve2={}
@@ -96,4 +133,4 @@ def SMTAlgo(ObsT, ObsF, ObsN):
            ObsT.append(str(e)) 
      elif valT[e] == 0:  
        ObsN.append(str(e)) 
- return(ObsT, ObsF, ObsN)
+ return(ObsT, ObsF, ObsN, liste)

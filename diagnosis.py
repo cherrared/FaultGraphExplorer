@@ -287,6 +287,7 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write("   Sauve[i]=t[i] \n")
     fi.write("   fi.write(str(i)+\":\"+str(t[i])+ \" \\n \")" + "\n")
     fi.write("   i=i+1\n")
+
     fi.write(" for e in liste:\n")
     fi.write("   if t[0][1][e] == False :\n")
     # check if node e can be tested
@@ -321,7 +322,7 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     # if node e is not testable , extend the graph and add it to the extended observation file:
     fi.write("     elif valT[e] == 0:  \n")
     fi.write("       ObsN.append(str(e)) \n")
-    fi.write(" return(ObsT, ObsF, ObsN)")
+    fi.write(" return(ObsT, ObsF, ObsN, liste)")
 
     fi.close()
     #os.system('pwd')
@@ -392,8 +393,12 @@ if __name__ == "__main__":
 
     for i in ObsT:
         val[i] = True
+    message = 0
+    liste_diff = []
+    liste_smt = []
+    x = 0
 
-    while True:
+    while message == 0:
 
         #Create the SMT file with the current observations
         boucle_diag(G, ObsT, ObsF, ObsN)
@@ -401,4 +406,12 @@ if __name__ == "__main__":
         # reload the SMT file
         reload(sm)
         # execute the SMT file
-        ObsT, ObSF, ObsN = sm.SMTAlgo(ObsT, ObsF, ObsN)
+        ObsT, ObSF, ObsN, liste_smt = sm.SMTAlgo(ObsT, ObsF, ObsN)
+        ## check if we have same solutions
+        if x > 0:
+            if liste_diff == liste_smt:
+                message = 1
+        liste_diff = liste_smt
+        x = x + 1
+
+    if message == 1: print("More observations are needed !!")
