@@ -459,6 +459,9 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write("       ObsN.append(str(e)) \n")
     #next solution
     fi.write("       extend= False \n")
+    fi.write(" return(ObsT, ObsF, ObsN, liste, extend, stop)")
+
+    fi.close()
 
 
 if __name__ == "__main__":
