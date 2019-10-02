@@ -3,6 +3,5 @@ pygraphviz
 networkx
 scipy
 matplotlib
-matplotlib.pyplot
-subprocess
 PyYAML
+tk
