@@ -125,19 +125,11 @@ def dr_graph(G, i, ax, color_map, color_map2, pos):
 
     # same layout using matplotlib with no labels
 
-<<<<<<< HEAD
     #ax[i].set_axis_off()
     #if i == 0:
     #    ax[i].set_title('Global Dependency Graph')
     #else:
     #    ax[i].set_title('Dependency sub_graph')
-=======
-    ax[i].set_axis_off()
-    if i == 0:
-        ax[i].set_title('Global Dependency Graph')
-    else:
-        ax[i].set_title('Dependency sub_graph')
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
     ### draw with random positions : if not comment the following
     pos = graphviz_layout(G, prog='dot')
 
@@ -152,11 +144,7 @@ def dr_graph(G, i, ax, color_map, color_map2, pos):
 ##### Extract the Sub-graph GG from G using the observations
 
 
-<<<<<<< HEAD
 def graph_GG(G, ObsF, nodes):
-=======
-def graph_GG(G, nodes):
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
 
     neighbors = []
     for i in nodes:
@@ -186,27 +174,16 @@ def yaml_dump(filepath, data):
 def draw_global_graph(G, ObsT, ObsF, ObsN):
     ### color and draw the global graph
     color_map, color_map2 = color_graph(G, ObsF, ObsT, ObsN)
-<<<<<<< HEAD
     #fig, axes = plt.subplots(nrows=1, ncols=2)
     #ax = axes.flatten()
     pos = pos_def(G)
     ax = {}
-=======
-    fig, axes = plt.subplots(nrows=1, ncols=2)
-    ax = axes.flatten()
-    pos = pos_def(G)
-    os.system('')
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
     dr_graph(G, 0, ax, color_map, color_map2, pos)
 
     # split the image into 2 axes
 
     #plt.savefig("graph2.png")
-<<<<<<< HEAD
     plt.show()
-=======
-    #plt.show()
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
 
 
 def draw_subgraph(G, ObsT, ObsF, ObsN):
@@ -228,7 +205,6 @@ def draw_subgraph(G, ObsT, ObsF, ObsN):
     print('True observations: Nodes Up:')
     for i in ObsT:
         Obs_total.append(i)
-<<<<<<< HEAD
         print(i)
     print(
         "**********************************************************************"
@@ -252,25 +228,6 @@ def draw_subgraph(G, ObsT, ObsF, ObsN):
     plt.show()
     return (GF)
 
-=======
-
-    GF = graph_GG(G, Obs_total)
-
-    ### color and draw the sub_graph
-    for i in ObsF:
-        Obs_total.append(i)
-    for i in ObsT:
-        Obs_total.append(i)
-    for i in ObsN:
-        Obs_total.append(i)
-    color_map, color_map2 = color_graph(GF, ObsF, ObsT, ObsN)
-    pos = pos_def(G)
-    dr_graph(GF, 1, ax, color_map, color_map2, pos)
-
-    #plt.savefig("graph3.png")
-    plt.show()
-    ########## build the SMT file : Assertions
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
 
 def boucle_diag(G, ObsT, ObsF, ObsN):
 
@@ -302,11 +259,7 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write("    b=b+1" + "\n")
     fi.write(" return b " + "\n")
 
-<<<<<<< HEAD
     fi.write("def SMTAlgo(ObsT, ObsF, ObsN, extend, stop): \n")
-=======
-    fi.write("def SMTAlgo(ObsT, ObsF, ObsN, extend): \n")
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
     ### Write the definition of variables in the SMT file:
     z = 0
     for d in GF.nodes():
@@ -391,11 +344,7 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
         fi.write(" s.add(" + str(i) + "== True)")
         fi.write("\n")
     for i in ObsN:
-<<<<<<< HEAD
         fi.write(" s.add(" + str(i) + "== True)")
-=======
-        fi.write(" s.add(" + str(i) + "== None)")
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
         fi.write("\n")
     #### add the code for the result of SMT
 
@@ -459,33 +408,22 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     # if SF=1 then SF is true
     fi.write("           if valSF[e]== 1: \n")
     # if the node has no predecessors so the node is the RC:
-<<<<<<< HEAD
     fi.write("            if num_pred[e]== 0: \n")
     fi.write("             print(e, \"  is the root cause\")\n")
     fi.write("             stop= True\n")
     fi.write("             ObsF.append(str(e))\n")
-=======
-    fi.write("            if num_pred[i]== 0: \n")
-    fi.write("             print(e, \"  is the root cause\")\n")
-    fi.write("             sys.exit(0)\n")
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
     # if the node has predecessors it could be the root cause
     fi.write("            else:\n")
     fi.write("             print(e, \"  Possible root cause? Yes/No\")\n")
     fi.write("             answer= input()\n")
     fi.write("             if answer==\"Yes\": \n")
     fi.write("               print(e, \"  is the root cause\")\n")
-<<<<<<< HEAD
     fi.write("               stop= True\n")
     fi.write("               ObsF.append(str(e))\n")
-=======
-    fi.write("               sys.exit(0)\n")
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
     fi.write("             else:  ObsF.append(str(e)) \n")
     # if node is SF with auto-recovery
     fi.write("           elif valSF[e]==2: \n")
     # with no predecessors:
-<<<<<<< HEAD
     fi.write("            if num_pred[e]== 0: \n")
     fi.write("             print(e, \"  is the root cause\")\n")
     fi.write("             stop=True\n")
@@ -502,22 +440,6 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     )
     fi.write("               stop=True\n")
     fi.write("               ObsF.append(str(e))\n")
-=======
-    fi.write("            if num_pred[i]== 0: \n")
-    fi.write("             print(e, \"  is the root cause\")\n")
-    fi.write("             sys.exit(0)\n")
-    fi.write("            else:\n")
-    # with predecessors
-    fi.write(
-        "             print(e, \"  Possible root cause with auto_recovery node? Yes/No\")\n"
-    )
-    fi.write("             answer= input()\n")
-    fi.write("             if answer==\"Yes\": \n")
-    fi.write(
-        "               print(e, \"  is the root cause , check the auto recovery node\")\n"
-    )
-    fi.write("               sys.exit(0)\n")
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
     fi.write("           else:  ObsF.append(str(e)) \n")
     # a= True extend the node e
     fi.write("        elif a== True: \n")
@@ -536,13 +458,6 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write("       ObsN.append(str(e)) \n")
     #next solution
     fi.write("       extend= False \n")
-<<<<<<< HEAD
-    fi.write(" return(ObsT, ObsF, ObsN, liste, extend, stop)")
-=======
-    fi.write(" return(ObsT, ObsF, ObsN, liste, extend)")
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
-
-    fi.close()
 
 
 if __name__ == "__main__":
@@ -565,15 +480,11 @@ if __name__ == "__main__":
     ObsT = []
     ObsN = []
     extend = True
-<<<<<<< HEAD
     stop = False
     print(
         "**********************************************************************"
     )
     print(" Creating the global dependency graph...")
-=======
-
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
     G = nx.DiGraph()
 
     ## Read the obervation file and store it in data
@@ -640,13 +551,8 @@ if __name__ == "__main__":
         # reload the SMT file
         reload(sm)
         # execute the SMT file
-<<<<<<< HEAD
         ObsT, ObSF, ObsN, liste_smt, extend, stop = sm.SMTAlgo(
             ObsT, ObsF, ObsN, extend, stop)
-=======
-        ObsT, ObSF, ObsN, liste_smt, extend = sm.SMTAlgo(
-            ObsT, ObsF, ObsN, extend)
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
         ## check if we have same solutions
         if x > 0:
             if liste_diff == liste_smt:
@@ -656,7 +562,4 @@ if __name__ == "__main__":
 
     if message == 1:
         print("More observations are needed !!")
-<<<<<<< HEAD
     draw_subgraph(G, ObsT, ObsF, ObsN)
-=======
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
