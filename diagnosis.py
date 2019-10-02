@@ -133,12 +133,13 @@ def dr_graph(G, i, ax, color_map, color_map2, pos):
     ### draw with random positions : if not comment the following
     pos = graphviz_layout(G, prog='dot')
 
-    nx.draw(G,
-            pos,
-            ax=ax[i],
-            with_labels=True,
-            edge_color=color_map2,
-            node_color=color_map)
+    nx.draw(
+        G,
+        pos,
+        #  ax=ax[i],
+        with_labels=True,
+        edge_color=color_map2,
+        node_color=color_map)
 
 
 ##### Extract the Sub-graph GG from G using the observations
@@ -551,7 +552,7 @@ if __name__ == "__main__":
         # reload the SMT file
         reload(sm)
         # execute the SMT file
-        ObsT, ObSF, ObsN, liste_smt, extend, stop = sm.SMTAlgo(
+        ObsT, ObsF, ObsN, liste_smt, extend, stop = sm.SMTAlgo(
             ObsT, ObsF, ObsN, extend, stop)
         ## check if we have same solutions
         if x > 0:

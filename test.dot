@@ -1,18 +1,4 @@
 strict digraph "" {
-<<<<<<< HEAD
-=======
-	Appbono2	 [SF=0,
-		T=1,
-		n=2];
-	Register21	 [SF=0,
-		T=1,
-		n=3];
-	Appbono2 -> Register21	 [at=1];
-	Cbono2sprout2	 [SF=0,
-		T=1,
-		n=2];
-	Appbono2 -> Cbono2sprout2	 [at=1];
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
 	Appbono1	 [SF=0,
 		T=1,
 		n=2];
@@ -25,7 +11,6 @@ strict digraph "" {
 		n=2];
 	Appbono1 -> Cbono1sprout1	 [at=1];
 	Apphomestead	 [SF=0,
-<<<<<<< HEAD
 		T=1,
 		n=2];
 	Register21	 [SF=0,
@@ -52,35 +37,6 @@ strict digraph "" {
 	Appcass	 [SF=0,
 		T=1,
 		n=2];
-=======
-		T=1,
-		n=2];
-	Apphomestead -> Register21	 [at=1];
-	Chomesteadcass	 [SF=0,
-		T=1,
-		n=2];
-	Apphomestead -> Chomesteadcass	 [at=1];
-	Csprout2homestead	 [SF=0,
-		T=1,
-		n=2];
-	Apphomestead -> Csprout2homestead	 [at=1];
-	Apphomestead -> Register11	 [at=1];
-	Csprout1homestead	 [SF=0,
-		T=1,
-		n=2];
-	Apphomestead -> Csprout1homestead	 [at=1];
-	Appsprout1	 [SF=0,
-		T=1,
-		n=2];
-	Appsprout1 -> Register11	 [at=1];
-	Appsprout1 -> Cbono1sprout1	 [at=1];
-	Appsprout1 -> Csprout1homestead	 [at=1];
-	Chomesteadcass -> Register21	 [at=1];
-	Chomesteadcass -> Register11	 [at=1];
-	Appcass	 [SF=0,
-		T=1,
-		n=2];
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
 	Appcass -> Register21	 [at=1];
 	Appcass -> Chomesteadcass	 [at=1];
 	Appcass -> Register11	 [at=1];
@@ -89,10 +45,6 @@ strict digraph "" {
 		n=2];
 	ClusterEventE1 -> Cbono1sprout1	 [at=1];
 	ClusterEventE1 -> Csprout1homestead	 [at=1];
-<<<<<<< HEAD
-=======
-	Csprout2homestead -> Register21	 [at=1];
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
 	clusterCsprout1	 [SF=0,
 		T=0,
 		at=0,
@@ -105,21 +57,8 @@ strict digraph "" {
 	DCbono1C -> Cbono1sprout1	 [at=1];
 	Cbono1sprout1 -> Register11	 [at=1];
 	Csprout1homestead -> Register11	 [at=1];
-<<<<<<< HEAD
-=======
-	Cbono2sprout2 -> Register21	 [at=1];
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
 	DCE1C	 [SF=1,
 		T=1,
 		n=1];
 	DCE1C -> Cbono1sprout1	 [at=1];
-<<<<<<< HEAD
-=======
-	Appsprout2	 [SF=0,
-		T=1,
-		n=2];
-	Appsprout2 -> Register21	 [at=1];
-	Appsprout2 -> Csprout2homestead	 [at=1];
-	Appsprout2 -> Cbono2sprout2	 [at=1];
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
 }
