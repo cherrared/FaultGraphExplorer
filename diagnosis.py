@@ -15,9 +15,12 @@ import modeling as md
 import yaml
 import modelingalgo as ma
 import SMTF as sm
+import subprocess
+import threading
 
 #####################################################################################################################
 ############################################# functions definition####################################################
+
 #### define the global graph
 
 #### define the dictionary of (node, value)
@@ -31,50 +34,104 @@ def vall(G):
 
 
 #### Graph coloring
-def color_graph(G, ObsF):
+def color_graph(G, ObsF, ObsT, ObsN):
     color_map = []
     color_map2 = []
+
     for node in G.nodes():
         k = 0
+        print("hhhhhhhhhhhhhhhhhhh")
         print(node)
-        while (k < len(ObsF) and node != ObsF[k]):
-            k = k + 1
+        for element in ObsF:
+            if str(node) == str(element):
+                color_map.append('red')
+                k = k + 1
 
-        if (k < len(ObsF)):
-            color_map.append('red')
-        elif (G.nodes[node]['n'] == 0):
+        # if the node is in ObsF tnan:
+        for element in ObsT:
+            if str(node) == str(element):
+                color_map.append('green')
+                k = k + 1
+        for element in ObsN:
+            if str(node) == str(element):
+                print("hhhhhhhhhh")
+                print(element + "===" + node)
+                color_map.append('orange')
+                k = k + 1
+        if (G.nodes[node]['n'] == 0 and k < 1):
             color_map.append('blue')
 
-        elif (G.nodes[node]['n'] == 1):
-            color_map.append('green')
+        elif (G.nodes[node]['n'] == 1 and k < 1):
+            color_map.append('gray')
 
-        elif (G.nodes[node]['n'] == 2):
-            color_map.append('orange')
+        elif (G.nodes[node]['n'] == 2 and k < 1):
+            color_map.append('yellow')
 
-        elif (G.nodes[node]['n'] == 3):
+        elif (G.nodes[node]['n'] == 3 and k < 1):
             color_map.append('pink')
 
     for e in G.edges():
         if (G[e[0]][e[1]]['at'] == 0):
             color_map2.append('green')
         if (G[e[0]][e[1]]['at'] == 1):
+
             color_map2.append('blue')
         if (G[e[0]][e[1]]['at'] == 2):
+
             color_map2.append('orange')
         if (G[e[0]][e[1]]['at'] == 3):
             color_map2.append('pink')
+
     return (color_map, color_map2)
 
 
+## node position definition
+def pos_def(G):
+
+    pos_0x = 0
+    pos_1x = 0
+    pos_2x = 0
+    pos_3x = 0
+    pos = {}
+    for node in G.nodes():
+
+        if (G.nodes[node]['n'] == 0):
+
+            pos[node] = (pos_0x, 18.0)
+            pos_0x = pos_0x + 100
+
+        elif (G.nodes[node]['n'] == 1):
+
+            pos[node] = (pos_1x, 90.0)
+            pos_1x = pos_1x + 10000.0
+        elif (G.nodes[node]['n'] == 2):
+
+            pos[node] = (int(pos_2x), 162.0)
+            pos_2x = pos_2x + 10000.0
+        elif (G.nodes[node]['n'] == 3):
+
+            pos[node] = (int(pos_3x), 200)
+            pos_3x = pos_3x + 10000.0
+
+    return (pos)
+
+
 ##### Draw the graph
-def dr_graph(G, color_map, color_map2):
+def dr_graph(G, i, ax, color_map, color_map2, pos):
     # write dot file to use with graphviz
     # run "dot -Tpng test.dot >test.png"
     write_dot(G, 'test.dot')
 
     # same layout using matplotlib with no labels
-    plt.title('dependency graph')
+
+    #ax[i].set_axis_off()
+    #if i == 0:
+    #    ax[i].set_title('Global Dependency Graph')
+    #else:
+    #    ax[i].set_title('Dependency sub_graph')
+    ### draw with random positions : if not comment the following
     pos = graphviz_layout(G, prog='dot')
+
     nx.draw(G,
             pos,
             with_labels=True,
@@ -85,17 +142,17 @@ def dr_graph(G, color_map, color_map2):
 ##### Extract the Sub-graph GG from G using the observations
 
 
-def graph_GG(G, nodes):
-    print("***********************")
-    print(nodes)
+def graph_GG(G, ObsF, nodes):
+
     neighbors = []
     for i in nodes:
         neighbors.append(i)
-        for j in list(G.neighbors(i)):
-            neighbors.append(j)
+    # for j in list(G.neighbors(i)):
+    #        neighbors.append(j)
 
-        for j in list(G.predecessors(i)):
-            neighbors.append(j)
+    for j in ObsF:
+        for node in list(G.predecessors(j)):
+            neighbors.append(node)
 
     GG = G.subgraph(neighbors)
 
@@ -112,43 +169,74 @@ def yaml_dump(filepath, data):
     yaml.dump(data, topo)
 
 
-def boucle_diag(G, ObsT, ObsF, ObsN):
+def draw_global_graph(G, ObsT, ObsF, ObsN):
+    ### color and draw the global graph
+    color_map, color_map2 = color_graph(G, ObsF, ObsT, ObsN)
+    #fig, axes = plt.subplots(nrows=1, ncols=2)
+    #ax = axes.flatten()
+    pos = pos_def(G)
+    ax = {}
+    dr_graph(G, 0, ax, color_map, color_map2, pos)
+
+    # split the image into 2 axes
+
+    #plt.savefig("graph2.png")
+    plt.show()
+
+
+def draw_subgraph(G, ObsT, ObsF, ObsN):
 
     Obs_total = []
-
-    ### color and draw the global graph
-    color_map, color_map2 = color_graph(G, ObsF)
-
-    dr_graph(G, color_map, color_map2)
-
-    plt.savefig("graph2.png")
-    plt.show()
-
+    pos = pos_def(G)
+    ax = {}
     ### get the sub-grah GG from obs in the list ObsF with the function GG_graph
+    print(
+        "**********************************************************************"
+    )
+    print('False observations: Nodes down:')
     for i in ObsF:
         Obs_total.append(i)
+        print(i)
+    print(
+        "**********************************************************************"
+    )
+    print('True observations: Nodes Up:')
     for i in ObsT:
         Obs_total.append(i)
+        print(i)
+    print(
+        "**********************************************************************"
+    )
+    print('Suspect Nodes:')
     for i in ObsN:
         Obs_total.append(i)
-    GF = graph_GG(G, Obs_total)
+    GF = graph_GG(G, ObsF, Obs_total)
 
     ### color and draw the sub_graph
-    for i in ObsF:
-        Obs_total.append(i)
-    for i in ObsT:
-        Obs_total.append(i)
-    for i in ObsN:
-        Obs_total.append(i)
-    color_map, color_map2 = color_graph(GF, ObsF)
 
-    dr_graph(GF, color_map, color_map2)
+    color_map, color_map2 = color_graph(GF, ObsF, ObsT, ObsN)
+    pos = pos_def(G)
+    print(
+        "**********************************************************************"
+    )
+    print(" Creating the sub_graph...")
+    dr_graph(GF, 1, ax, color_map, color_map2, pos)
 
-    plt.savefig("graph2.png")
+    #plt.savefig("graph3.png")
     plt.show()
+    return (GF)
+
+
+def boucle_diag(G, ObsT, ObsF, ObsN):
+
+    draw_global_graph(G, ObsT, ObsF, ObsN)
+    GF = draw_subgraph(G, ObsT, ObsF, ObsN)
 
     ########## build the SMT file : Assertions
-
+    print(
+        "**********************************************************************"
+    )
+    print(" Creating the SMT_file...")
     fi = open("SMTF.py", "w")
     ## import:
 
@@ -169,7 +257,7 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write("    b=b+1" + "\n")
     fi.write(" return b " + "\n")
 
-    fi.write("def SMTAlgo(ObsT, ObsF, ObsN): \n")
+    fi.write("def SMTAlgo(ObsT, ObsF, ObsN, extend, stop): \n")
     ### Write the definition of variables in the SMT file:
     z = 0
     for d in GF.nodes():
@@ -195,12 +283,17 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write(" s=Solver()")
     fi.write("\n")
 
+    dico_pred = {}
     for node in GF.nodes():
+        num_predecessors = 0
         ne = []
         z = 0
         zz = 0
         for i in GF.predecessors(node):
             ne.append(i)
+            num_predecessors = num_predecessors + 1
+        # affect the number of predecessors of each node
+        dico_pred[node] = num_predecessors
         if len(ne) > 1:
 
             for j in GF.predecessors(node):
@@ -239,6 +332,7 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
 
     FF.remove_nodes_from(ObsF)
     FF.remove_nodes_from(ObsT)
+    FF.remove_nodes_from(ObsN)
 
     #### Add the observations:
     for i in ObsF:
@@ -247,15 +341,22 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     for i in ObsT:
         fi.write(" s.add(" + str(i) + "== True)")
         fi.write("\n")
+    for i in ObsN:
+        fi.write(" s.add(" + str(i) + "== True)")
+        fi.write("\n")
     #### add the code for the result of SMT
 
     fi.write(" liste=[]\n")
+
     fi.write(" valT={}\n")
     fi.write(" valSF={}\n")
+
+    fi.write(" num_pred={}\n")
     for i in FF.nodes():
         fi.write(" liste.append(" + str(i) + ")\n")
         fi.write(" valT[" + str(i) + "]=" + str(FF.nodes[i]['T']) + "\n")
         fi.write(" valSF[" + str(i) + "]=" + str(FF.nodes[i]['SF']) + "\n")
+        fi.write(" num_pred[" + str(i) + "]=" + str(dico_pred[i]) + "\n")
 
     # Open the file of solutions
     fi.write(" fi = open(\"Solutions.txt\", \"w\")\n")
@@ -287,12 +388,12 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write("   Sauve[i]=t[i] \n")
     fi.write("   fi.write(str(i)+\":\"+str(t[i])+ \" \\n \")" + "\n")
     fi.write("   i=i+1\n")
-
+    # look for the false solutions that are not in the known observations, "liste" contains only unknown observations
     fi.write(" for e in liste:\n")
     fi.write("   if t[0][1][e] == False :\n")
     # check if node e can be tested
     fi.write("     if valT[e] == 1 :\n")
-    # the node e can be teted
+    # the node e can be tested
 
     fi.write("        print(\"Please check the value of: \", e) \n")
     fi.write("        a=input() \n")
@@ -302,36 +403,71 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     # a= False
     fi.write("        if a== False:\n")
     #a= false, check the SF value
+    # if SF=1 then SF is true
     fi.write("           if valSF[e]== 1: \n")
+    # if the node has no predecessors so the node is the RC:
+    fi.write("            if num_pred[e]== 0: \n")
     fi.write("             print(e, \"  is the root cause\")\n")
-    fi.write("             sys.exit(0)\n")
+    fi.write("             stop= True\n")
+    fi.write("             ObsF.append(str(e))\n")
+    # if the node has predecessors it could be the root cause
+    fi.write("            else:\n")
+    fi.write("             print(e, \"  Possible root cause? Yes/No\")\n")
+    fi.write("             answer= input()\n")
+    fi.write("             if answer==\"Yes\": \n")
+    fi.write("               print(e, \"  is the root cause\")\n")
+    fi.write("               stop= True\n")
+    fi.write("               ObsF.append(str(e))\n")
+    fi.write("             else:  ObsF.append(str(e)) \n")
+    # if node is SF with auto-recovery
     fi.write("           elif valSF[e]==2: \n")
+    # with no predecessors:
+    fi.write("            if num_pred[e]== 0: \n")
+    fi.write("             print(e, \"  is the root cause\")\n")
+    fi.write("             stop=True\n")
+    fi.write("             ObsF.append(str(e))\n")
+    fi.write("            else:\n")
+    # with predecessors
     fi.write(
-        "             print(e, \"  is the root cause, check the auto recovery node\") \n"
+        "             print(e, \"  Possible root cause with auto_recovery node? Yes/No\")\n"
     )
-    fi.write("             sys.exit(0)\n")
-    # if a =true add it to extended node  file
+    fi.write("             answer= input()\n")
+    fi.write("             if answer==\"Yes\": \n")
+    fi.write(
+        "               print(e, \"  is the root cause , check the auto recovery node\")\n"
+    )
+    fi.write("               stop=True\n")
+    fi.write("               ObsF.append(str(e))\n")
     fi.write("           else:  ObsF.append(str(e)) \n")
-    #fi.write("print(\"************************ Adding the extended nodes to the file .....\") \n")
     # a= True extend the node e
     fi.write("        elif a== True: \n")
     # if a = True add it to the added observation file
 
     fi.write("           ObsT.append(str(e)) \n")
-    #fi.write("print(\"************************ Adding the true observations to the added obs  file .....\") \n")
-    # if node e is not testable , extend the graph and add it to the extended observation file:
+    # next solution
+    fi.write("           extend= False \n")
+    # if the test is unavailable
+    fi.write("        elif a== None:  \n")
+    # next solution
+    fi.write("             ObsN.append(str(e)) \n")
+    fi.write("             extend= False \n")
+
     fi.write("     elif valT[e] == 0:  \n")
     fi.write("       ObsN.append(str(e)) \n")
-    fi.write(" return(ObsT, ObsF, ObsN, liste)")
+    #next solution
+    fi.write("       extend= False \n")
+    fi.write(" return(ObsT, ObsF, ObsN, liste, extend, stop)")
 
     fi.close()
-    #os.system('pwd')
 
 
 if __name__ == "__main__":
 
     # Get the topology and the observations file
-
+    print(
+        "**********************************************************************"
+    )
+    print(" Reading the topology and the observations files...")
     topo_path = sys.argv[1]  # topology file path
     file_path = sys.argv[2]  ## observation file path
     topo_path = "./" + str(topo_path)
@@ -344,7 +480,12 @@ if __name__ == "__main__":
     ObsF = []
     ObsT = []
     ObsN = []
-
+    extend = True
+    stop = False
+    print(
+        "**********************************************************************"
+    )
+    print(" Creating the global dependency graph...")
     G = nx.DiGraph()
 
     ## Read the obervation file and store it in data
@@ -393,12 +534,17 @@ if __name__ == "__main__":
 
     for i in ObsT:
         val[i] = True
+    # Affect None values for Suspect Observations:
+
+    for i in ObsN:
+        val[i] = None
+
     message = 0
     liste_diff = []
     liste_smt = []
     x = 0
 
-    while message == 0:
+    while message == 0 and stop == False:
 
         #Create the SMT file with the current observations
         boucle_diag(G, ObsT, ObsF, ObsN)
@@ -406,7 +552,8 @@ if __name__ == "__main__":
         # reload the SMT file
         reload(sm)
         # execute the SMT file
-        ObsT, ObSF, ObsN, liste_smt = sm.SMTAlgo(ObsT, ObsF, ObsN)
+        ObsT, ObSF, ObsN, liste_smt, extend, stop = sm.SMTAlgo(
+            ObsT, ObsF, ObsN, extend, stop)
         ## check if we have same solutions
         if x > 0:
             if liste_diff == liste_smt:
@@ -414,4 +561,6 @@ if __name__ == "__main__":
         liste_diff = liste_smt
         x = x + 1
 
-    if message == 1: print("More observations are needed !!")
+    if message == 1:
+        print("More observations are needed !!")
+    draw_subgraph(G, ObsT, ObsF, ObsN)

@@ -10,7 +10,8 @@ import networkx as nx
 #SF: spontaneous faults, 0 : non SF and 1 for SF node , SF=2 spontaneous fault with auto recovery
 #n=0 --> physrical layer , n=1 --> virtual layer, n=2 --> Application layer, n=3 --> service layer
 # T : a testable node or no : if T=1 -->testable , if T=0 --> non Testable
-#at=0--> or, at= 1--> and, at=2--> function
+#at=0--> or, at= 1--> and, at=2--> function (not a--> not b), at=3 --> function (a-->b)
+# ClusterS--> for docker status, ClusterC--> for docker connection , clusterA--> for application elasticity, ClusterD--> for docker elasticity
 #"""*********************************************
 #*********************************************"""
 #*************************###### physical env: n=0
@@ -99,14 +100,18 @@ def v_VNFs(G, site, VNF, elasticity, number_elasticity, Nbi):
         while i <= number_elasticity:
             # Virtual docker node  that represent the elasticity of VNF
             G.add_node("DC{0}{1}".format(str(VNF), i), SF=0, n=1, T=0)
+            G.add_node("ClusterD{0}".format(str(VNF)), SF=0, n=1, T=0)
             G.add_node("DC{0}{1}{2}".format(str(VNF), i, "S"), SF=1, n=1, T=1)
 
             G.add_node("DC{0}{1}{2}".format(str(VNF), i, "C"), SF=1, n=1, T=1)
 
             # Edges between docker node  that represent the elasticity of VNF
+            G.add_edges_from([("DC{0}{1}".format(
+                str(VNF), i), "ClusterD{0}".format(str(VNF)))],
+                             at=0)  # at=0 for "or" --> elasticity
             G.add_edges_from(
-                [("DC{0}{1}".format(str(VNF), i), "DC{0}".format(str(VNF)))],
-                at=0)  # at=0 for "or" --> elasticity
+                [("ClusterD{0}".format(str(VNF)), "DC{0}".format(str(VNF)))],
+                at=1)  # at=1 for "and clusterD" --> elasticity
 
             G.add_edges_from([("DC{0}{1}{2}".format(
                 str(VNF), i, "S"), "DC{0}".format(str(VNF)))],
@@ -229,10 +234,12 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
             G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=1)
             ## inter layer status dependencies with x
             G.add_node("clusterS{0}".format(VNF), SF=0, n=2, T=0)
+            G.add_node("clusterA{0}".format(VNF), SF=0, n=2, T=0)
             G.add_edges_from(
                 [("clusterS{0}".format(VNF), "App{0}".format(VNF))],
                 at=2)  # not(x) --> not(app)
-
+            G.add_edges_from(
+                [("clusterA{0}".format(VNF), "App{0}".format(VNF))], at=1)
             i = 1
             while i <= number_elasticity:
                 G.add_edges_from(
@@ -245,8 +252,8 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
 
                 # Define the edges between the APP and processes / App cluster and Appij
                 G.add_edges_from([("App{0}{1}".format(
-                    str(VNF), i), "App{0}".format(str(VNF)))],
-                                 at=2)  # at=2 --> or
+                    str(VNF), i), "clusterA{0}".format(str(VNF)))],
+                                 at=0)  # at=0 --> or
                 G.add_edges_from([("P{0}{1}".format(
                     str(VNF), i), "App{0}{1}".format(str(VNF), i))],
                                  at=1)
@@ -291,9 +298,13 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
             G.add_node("App{0}".format(str(VNF)), SF=0, n=2, T=1)
             ## inter layer status dependencies with x
             G.add_node("clusterS{0}".format(VNF), SF=0, n=2, T=0)
+            G.add_node("clusterA{0}".format(VNF), SF=0, n=2, T=0)
             G.add_edges_from(
                 [("clusterS{0}".format(VNF), "App{0}".format(VNF))],
                 at=2)  # not(x) --> not(app)
+            G.add_edges_from(
+                [("clusterA{0}".format(VNF), "App{0}".format(VNF))],
+                at=1)  # not(x) --> not(app)
             # Define the node for the memory cash exception
             G.add_node("Memory{0}".format(str(VNF)), SF=1, n=2, T=0)
             G.add_node("ClusterEvent{0}".format(str(VNF)), SF=1, n=2, T=0)
@@ -313,8 +324,8 @@ def A_VNFs(G, site, VNF, elasticity, number_elasticity, monit, etcd_bool, etcd,
 
                 G.add_node("App{0}{1}".format(str(VNF), i), SF=0, n=2, T=1)
                 G.add_edges_from([("App{0}{1}".format(
-                    str(VNF), i), "App{0}".format(str(VNF)))],
-                                 at=2)  # at=2 --> or
+                    str(VNF), i), "clusterA{0}".format(str(VNF)))],
+                                 at=0)  # at=0 --> or
 
     return xcpt
 
