@@ -40,7 +40,7 @@ def color_graph(G, ObsF, ObsT, ObsN):
 
     for node in G.nodes():
         k = 0
-<<<<<<< HEAD
+
         print("hhhhhhhhhhhhhhhhhhh")
         print(node)
         for element in ObsF:
@@ -66,26 +66,6 @@ def color_graph(G, ObsF, ObsT, ObsN):
             color_map.append('gray')
 
         elif (G.nodes[node]['n'] == 2 and k < 1):
-=======
-
-        while (k < len(ObsF) and node != ObsF[k]):
-            k = k + 1
-        # if the node is in ObsF tnan:
-        if (k < len(ObsF)):
-            color_map.append('red')
-        if node in ObsT:
-            color_map.append('green')
-        if node in ObsN:
-            color_map.append('orange')
-
-        elif (G.nodes[node]['n'] == 0):
-            color_map.append('blue')
-
-        elif (G.nodes[node]['n'] == 1):
-            color_map.append('gray')
-
-        elif (G.nodes[node]['n'] == 2):
->>>>>>> 62fef6127916f0f2e4109ce0e670f8e87879a978
             color_map.append('yellow')
 
         elif (G.nodes[node]['n'] == 3 and k < 1):
