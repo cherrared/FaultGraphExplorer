@@ -6,3 +6,5 @@ matplotlib
 matplotlib.pyplot
 subprocess
 PyYAML
+jinja2
+mpld3

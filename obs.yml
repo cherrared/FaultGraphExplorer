@@ -1,18 +1,14 @@
 Services:
     False_values:
-        - Csprout1E1
-        - Cbono1E1
-        - CE1EM
-       
-
+        - Cbono1sprout1
+        - Register11
+           
         
-        
-       
-       
+            
          
       
     True_values: 
-      - Register11
+      - Register21
     
        
      
