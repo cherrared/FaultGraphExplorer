@@ -31,10 +31,7 @@ Sites:
           - nb_VDcon: 1
           - VDcon: EM  
           - Type: Docker_ETCD
-
-
-
-                    
+               
         
     Networks:
       - Network_bridge: NB1

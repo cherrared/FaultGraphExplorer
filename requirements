@@ -3,5 +3,13 @@ pygraphviz
 networkx
 scipy
 matplotlib
+<<<<<<< HEAD
 PyYAML
 tk
+=======
+matplotlib.pyplot
+subprocess
+PyYAML
+jinja2
+mpld3
+>>>>>>> 5ca91200ff5d43b26ae6df61741710d9e8f7bd8f
