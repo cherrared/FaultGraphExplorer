@@ -17,6 +17,8 @@ import modelingalgo as ma
 import SMTF as sm
 import subprocess
 import threading
+import importlib as lib
+import six
 
 #####################################################################################################################
 ############################################# functions definition####################################################
@@ -41,8 +43,8 @@ def color_graph(G, ObsF, ObsT, ObsN):
     for node in G.nodes():
         k = 0
 
-        print("hhhhhhhhhhhhhhhhhhh")
-        print(node)
+        #print("hhhhhhhhhhhhhhhhhhh")
+        #print(node)
         for element in ObsF:
             if str(node) == str(element):
                 color_map.append('red')
@@ -55,8 +57,8 @@ def color_graph(G, ObsF, ObsT, ObsN):
                 k = k + 1
         for element in ObsN:
             if str(node) == str(element):
-                print("hhhhhhhhhh")
-                print(element + "===" + node)
+                #print("hhhhhhhhhh")
+                #print(element + "===" + node)
                 color_map.append('orange')
                 k = k + 1
         if (G.nodes[node]['n'] == 0 and k < 1):
@@ -243,7 +245,8 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi = open("SMTF.py", "w")
     ## import:
 
-    fi.write("from z3 import *")
+    fi.write("from z3 import *\n")
+    fi.write("import six")
     fi.write("\n")
 
     ### Functions
@@ -366,7 +369,7 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write(" Sauve={}\n")
     fi.write(" Sauve2={}\n")
     fi.write(" save=[]\n")
-
+    fi.write(" t=[]\n")    
     fi.write(" i=1\n")
     fi.write(" s.check() \n")
     fi.write(" c=compte(s.model(),liste)\n")
@@ -385,12 +388,17 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write("   if (save[liste[j]] == False):\n")
     fi.write("    s.add(And(liste[j] == True))\n")
     fi.write("   j=j+1\n")
-    fi.write(" t=sorted(Sauve.itervalues())\n")
-    fi.write(" i=0\n")
-    fi.write(" while i<len(t):\n")
-    fi.write("   Sauve[i]=t[i] \n")
-    fi.write("   fi.write(str(i)+\":\"+str(t[i])+ \" \\n \")" + "\n")
-    fi.write("   i=i+1\n")
+   
+    fi.write(" k=0 \n")
+    fi.write(" while k<i-1:\n")
+    fi.write("   t.append(Sauve[k]) \n")
+    fi.write("   k=k+1\n")
+    fi.write(" k=0\n")
+    fi.write(" t.sort(key=lambda x:x[0])\n")
+    #fi.write(" print(t)\n")    
+    fi.write(" while k<i-1:\n")
+    fi.write("   fi.write(str(k)+\":\"+str(t[k])+ \" \\n \")" + "\n")
+    fi.write("   k=k+1\n")
     # look for the false solutions that are not in the known observations, "liste" contains only unknown observations
     fi.write(" for e in liste:\n")
     fi.write("   if t[0][1][e] == False :\n")
@@ -404,7 +412,7 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     #fi.write("      print(\"Please enter a False or True values\")\n")
     #fi.write("      a=input() \n")
     # a= False
-    fi.write("        if a== False:\n")
+    fi.write("        if a == 'False':\n")
     #a= false, check the SF value
     # if SF=1 then SF is true
     fi.write("           if valSF[e]== 1: \n")
@@ -443,14 +451,16 @@ def boucle_diag(G, ObsT, ObsF, ObsN):
     fi.write("               ObsF.append(str(e))\n")
     fi.write("           else:  ObsF.append(str(e)) \n")
     # a= True extend the node e
-    fi.write("        elif a== True: \n")
+    fi.write("        elif a == 'True': \n")
+
+        
     # if a = True add it to the added observation file
 
     fi.write("           ObsT.append(str(e)) \n")
     # next solution
     fi.write("           extend= False \n")
     # if the test is unavailable
-    fi.write("        elif a== None:  \n")
+    fi.write("        elif a == 'None':  \n")
     # next solution
     fi.write("             ObsN.append(str(e)) \n")
     fi.write("             extend= False \n")
@@ -548,12 +558,12 @@ if __name__ == "__main__":
     x = 0
 
     while message == 0 and stop == False:
-
+      
         #Create the SMT file with the current observations
         boucle_diag(G, ObsT, ObsF, ObsN)
 
         # reload the SMT file
-        reload(sm)
+        lib.reload(sm)
         # execute the SMT file
         ObsT, ObsF, ObsN, liste_smt, extend, stop = sm.SMTAlgo(
             ObsT, ObsF, ObsN, extend, stop)
