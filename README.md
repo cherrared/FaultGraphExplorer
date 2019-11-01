@@ -26,3 +26,19 @@ $ python3 diagnosis.py input-topo-ex1.yml obs.yml
 
 ## Example1:
 ![vIMS Architecture]( https://github.com/cherrared/SAKURA-Model-based-RCA/blob/master/architecture.png)
+
+* The input-topo-ex1.yml describes this architecture of three sites or physical servers
+* To model this architecture:
+
+
+```
+$ python3 modelingalgo.py input-topo-ex1.yml
+
+```
+
+
+
+### Fault Scnario Docker Bono Down:
+![Bono down](https://github.com/cherrared/SAKURA-Model-based-RCA/blob/master/scenario.png )
+* Input initial observations: obs.yml
+
