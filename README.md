@@ -40,5 +40,16 @@ $ python3 modelingalgo.py input-topo-ex1.yml
 
 ### Fault Scnario Docker Bono Down:
 ![Bono down](https://github.com/cherrared/SAKURA-Model-based-RCA/blob/master/scenario.png )
-* Input initial observations: obs.yml
+* Input initial observations of this fault: obs.yml
+* Run the diagnosis algo to explain the observations:
+```
+$ python3 diagnosis.py input-topo-ex1.yml obs.yml
+
+```
+* Each time provide the correct observations with testing the clearwater vIMS deployement
+* Final result: 
+![Result](https://github.com/cherrared/SAKURA-Model-based-RCA/blob/master/Figure_Dsss.png)
+
+
+
 
