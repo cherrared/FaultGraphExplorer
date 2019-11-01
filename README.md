@@ -25,4 +25,4 @@ $ python3 diagnosis.py input-topo-ex1.yml obs.yml
 ```
 
 ## Example1:
-!vIMS Architecture] https://github.com/cherrared/SAKURA-Model-based-RCA/blob/master/architecture.png
+![vIMS Architecture] https://github.com/cherrared/SAKURA-Model-based-RCA/blob/master/architecture.png
