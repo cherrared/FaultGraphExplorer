@@ -7,6 +7,7 @@ This repository contains a self-modeling approach and a diagnosis process for th
 * A diagnosis Algorithm: modelingalgo.py
 * Input of false and true observations: Obs.yml
 * Input of the network topology : input-topo-ex1.yml and input-topo-ex2.yml
+* The diagnosis process solutions:  Solutions.txt
 
 ## Prerequisites 
 sudo apt-get install python3-tk 
