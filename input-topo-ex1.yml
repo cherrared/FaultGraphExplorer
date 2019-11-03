@@ -70,7 +70,7 @@ Sites:
           - nb: 1
           - monit: True
           - nb_VLcon: 0 
-          - nb_VDcon: 1 #for etcd 0 we verify etcd converge otherwise
+          - nb_VDcon: 1 
           - VDcon: EM
           - Type: Docker_ETCD
           
