@@ -12,12 +12,12 @@ This repository contains a self-modeling approach and a diagnosis process for th
 ## Prerequisites 
 
 ```
-sudo apt-get install python3-tk 
+$ sudo apt-get install python3-tk 
 
 ```
 
 ```
-pip3 install --user -r requirements
+$ pip3 install --user -r requirements
 
 ```
 ## Self-modeling algo:
