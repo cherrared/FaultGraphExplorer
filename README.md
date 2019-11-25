@@ -17,7 +17,7 @@ $ sudo apt-get install python3-tk
 ```
 
 ```
-$ pip3 install --user -r requirements
+$ pip3 install --user -r requirements2
 
 ```
 ## Self-modeling algo:
