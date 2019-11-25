@@ -10,9 +10,16 @@ This repository contains a self-modeling approach and a diagnosis process for th
 * The diagnosis process solutions:  Solutions.txt
 
 ## Prerequisites 
+
+```
 sudo apt-get install python3-tk 
+
+```
+
+```
 pip3 install --user -r requirements
 
+```
 ## Self-modeling algo:
 
 ```
