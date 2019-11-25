@@ -20,6 +20,14 @@ $ sudo apt-get install python3-tk
 $ pip3 install --user -r requirements2
 
 ```
+
+* Clone the project: 
+```
+ git clone git@github.com:cherrared/SAKURA-Model-based-RCA.git
+
+```
+
+
 ## Self-modeling algo:
 
 ```
